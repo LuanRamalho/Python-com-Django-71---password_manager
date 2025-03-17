@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gerenciador de Senhas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 36px;
+        }
+
+        .container {
+            margin-top: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 900px;
+        }
+
+        .folder {
+            padding: 15px;
+            background: linear-gradient(45deg, #1000AA, #0A008C);
+            color: #fff;
+            margin: 10px 0;
+            display: inline-block;
+            width: 95%;
+            text-align: left;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        .folder:hover {
+            background: linear-gradient(45deg, #0F009E, #000075);
+        }
+
+        .folder a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .folder a:hover {
+            text-decoration: underline;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #2ecc71;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .search-container {
+            margin: 20px 0;
+        }
+
+        .search-container input {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+    </style>
+    <script>
+        function searchFolders() {
+            var input, filter, folders, folder, i, txtValue;
+            input = document.getElementById('search');
+            filter = input.value.toUpperCase();
+            folders = document.getElementsByClassName('folder');
+            
+            for (i = 0; i < folders.length; i++) {
+                folder = folders[i];
+                txtValue = folder.textContent || folder.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    folder.style.display = "";
+                } else {
+                    folder.style.display = "none";
+                }
+            }
+        }
+
+        function confirmDelete(folderId) {
+            if (confirm("Tem certeza de que deseja excluir esta pasta?")) {
+                window.location.href = '/delete_folder/' + folderId;
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <h1>Minhas Pastas</h1>
+
+    <!-- Barra de pesquisa -->
+    <div class="search-container">
+        <input type="text" id="search" onkeyup="searchFolders()" placeholder="Buscar por nome da pasta...">
+    </div>
+
+    <div class="container">
+        <form method="POST" action="{% url 'create_folder' %}">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Nome da Pasta" required>
+            <button type="submit">Criar Pasta</button>
+        </form>
+
+        <!-- Exibindo pastas -->
+        <div>
+            {% for folder in folders %}
+                <div class="folder">
+                    <a href="{% url 'folder_detail' folder.id %}">{{ folder.name }}</a>
+                    <div class="button-container">
+                        <a href="{% url 'edit_folder' folder.id %}"><button>Editar</button></a>
+                        
+                        <!-- Formulário de exclusão com método POST -->
+                        <form action="{% url 'delete_folder' folder.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-btn">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>

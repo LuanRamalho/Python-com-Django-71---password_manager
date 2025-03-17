@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ folder.name }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .search-container input {
+            padding: 12px 15px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        form input, form button {
+            margin: 8px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        form input[type="submit"], form button[type="submit"], form button[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form input[type="submit"]:hover, form button[type="submit"]:hover, form button[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        .entry {
+            padding: 20px;
+            background: linear-gradient(135deg, #7700A8, #4B007F);
+            margin: 15px auto;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            width: 80%;
+            max-width: 600px;
+            color: white;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: left; 
+            justify-content: flex-start;
+            position: relative;
+        }
+
+        .entry strong {
+            color: #fff;
+        }
+
+        .entry a {
+            color: #b3e5fc;
+            text-decoration: none;
+        }
+
+        .entry a:hover {
+            text-decoration: underline;
+        }
+
+        .entry input[type="password"] {
+            margin: 5px 0;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            color: black;
+        }
+
+        .entry button {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .entry button:hover {
+            background-color: #0077b3;
+        }
+
+        .custom-field {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap; /* Added for responsiveness */
+        }
+
+        .custom-field input {
+            margin: 5px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            flex-grow: 1; /* Allow inputs to grow */
+            min-width: 150px; /* Minimum width for inputs */
+        }
+
+        .custom-field button {
+            margin: 5px;
+        }
+
+        .edit-delete-container {
+            background-color: #fff; /* Fundo branco */
+            border-radius: 15px; /* Bordas arredondadas */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px; /* Espaço acima do container */
+            width: calc(100% - 80px); /* Ajuste para centralizar e considerar o padding da entry */
+            height: 100px;
+            position: relative; /* Posicionamento relativo para centralizar */
+            left: 50%; /* Move o container para o centro */
+            transform: translateX(-50%); /* Ajusta o alinhamento central */
+            gap: 10px; /* Espaço entre os botões */
+        }
+
+        .edit-delete-container button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            background-color: #003366;
+        }
+
+        .edit-delete-container button:hover {
+            background-color: #0D004D;
+        }
+
+        .edit-btn {
+            color: white;
+            margin-left: 170px;
+        }
+
+        .edit-btn:hover {
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+    <script>
+        function togglePassword(id) {
+            var input = document.getElementById("password_" + id);
+            input.type = (input.type === "password") ? "text" : "password";
+        }
+
+        function addField(containerId) {
+            var container = document.getElementById(containerId);
+            var div = document.createElement("div");
+            div.classList.add("custom-field");
+
+            var labelInput = document.createElement("input");
+            labelInput.type = "text";
+            labelInput.name = "extra_field_label[]";
+            labelInput.placeholder = "Nome do Campo";
+            labelInput.required = true;
+
+            var valueInput = document.createElement("input");
+            valueInput.type = "text";
+            valueInput.name = "extra_field_value[]";
+            valueInput.placeholder = "Valor do Campo";
+            valueInput.required = true;
+
+            var removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.innerText = "Remover";
+            removeButton.onclick = function() {
+                div.remove();
+            };
+
+            div.appendChild(labelInput);
+            div.appendChild(valueInput);
+            div.appendChild(removeButton);
+            container.appendChild(div);
+        }
+
+        function searchEntries() {
+            var input = document.getElementById("searchInput");
+            var filter = input.value.toLowerCase();
+            var entries = document.getElementsByClassName("entry");
+
+            for (var i = 0; i < entries.length; i++) {
+                var siteName = entries[i].querySelector(".site-name").textContent.toLowerCase();
+                var siteLink = entries[i].querySelector(".site-link").textContent.toLowerCase();
+                var username = entries[i].querySelector(".username").textContent.toLowerCase();
+
+                if (siteName.indexOf(filter) > -1 || siteLink.indexOf(filter) > -1 || username.indexOf(filter) > -1) {
+                    entries[i].style.display = "";
+                } else {
+                    entries[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Pasta: {{ folder.name }}</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="searchEntries()" placeholder="Buscar por nome do site, link ou usuário">
+    </div>
+
+    <form method="POST" action="{% url 'add_password' folder.id %}">
+        {% csrf_token %}
+        <input type="text" name="site_name" placeholder="Nome do Site" required>
+        <input type="url" name="site_link" placeholder="Link do Site" required>
+        <input type="text" name="username" placeholder="Usuário" required>
+        <input type="password" name="password" id="password_new" placeholder="Senha" required>
+        <button type="button" onclick="togglePassword('new')">👀</button>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <h2>Senhas Salvas</h2>
+    {% for entry in entries %}
+        <div class="entry">
+            <p><strong>Nome do Site:</strong> <span class="site-name">{{ entry.site_name }}</span></p>
+            <p><strong>Link:</strong> <a class="site-link" href="{{ entry.site_link }}">{{ entry.site_link }}</a></p>
+            <p><strong>Usuário:</strong> <span class="username">{{ entry.username }}</span></p>
+            <p><strong>Senha:</strong>
+                <input type="password" id="password_{{ entry.id }}" value="{{ entry.password }}">
+                <button type="button" onclick="togglePassword('{{ entry.id }}')">👀</button>
+            </p>
+
+            {% if entry.extra_fields %}
+                <h3>Campos Personalizados:</h3>
+                <ul>
+                    {% for label, value in entry.extra_fields.items %}
+                        <li><strong>{{ label }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form method="POST" action="{% url 'add_password' folder.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="entry_id" value="{{ entry.id }}">
+                <div id="extra_fields_{{ entry.id }}"></div>
+                <button type="button" onclick="addField('extra_fields_{{ entry.id }}')">Adicionar Campo</button>
+                <button type="submit">Salvar Alterações</button>
+            </form>
+
+            <div class="edit-delete-container">
+                <a href="{% url 'edit_password' entry.id %}">
+                    <button class="edit-btn">Editar</button>
+                </a>
+                <form action="{% url 'delete_password' entry.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn">Excluir</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+
+   <a href="{% url 'home' %}">Voltar</a>
+
+</body>
+</html>
